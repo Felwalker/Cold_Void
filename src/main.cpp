@@ -63,7 +63,7 @@ int main ()
 			case GAMEPLAY:
 			{
 				DrawText("Thought there would be more to it", 200, 200 , 50, WHITE);
-				if(frame_count > 50) DrawText("Might as well press esc", 200, 260, 50, WHITE);
+				if(frame_count > 200) DrawText("Might as well press esc", 200, 260, 50, WHITE);
 			} break;
 			default: break;
 		}

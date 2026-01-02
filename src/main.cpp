@@ -28,6 +28,7 @@ int main ()
 	int title_y_position = 320;
 	//Size of the Title
 	int title_size = 600;
+	char title_text[] = "Cold Void";
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
@@ -39,7 +40,7 @@ int main ()
 		//title colapse inward
 		if(title_size > 10){
 			// draw some text using the default font
-		DrawText("Cold Void", title_x_position, title_y_position,title_size,WHITE);
+		DrawText(title_text, title_x_position, title_y_position,title_size,WHITE);
 			// progressively make title size smaller
 			title_x_position++;
 			title_y_position++;

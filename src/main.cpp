@@ -11,9 +11,44 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
-typedef enum {TITLE, GAMEPLAY} GameScreen;
+typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
 
 //bool debug_is_on = true;
+
+//global text box position
+int textbox_upper_left_x = 10;
+int textbox_upper_left_y = 900;
+int textbox_width = 1580;
+int textbox_height = 370; 
+int textbox_text_size = 50;
+int text_start_x = textbox_upper_left_x + 100;
+int text_start_y = textbox_upper_left_y + 100;
+int text_height = 50;
+
+void draw_cold_void_textbox(){
+	DrawRectangle(textbox_upper_left_x, textbox_upper_left_y, textbox_width, textbox_height, BLUE);
+	DrawRectangle(textbox_upper_left_x + 10, textbox_upper_left_y + 10, textbox_width - 20, textbox_height - 20, BLACK);
+}
+
+void draw_cursor(int position){
+	switch(position){
+		case 0:
+		{
+		struct Vector2 a = {text_start_x- 40, text_start_y};
+		struct Vector2 b = {text_start_x - 40, text_start_y + text_height};
+		struct Vector2 c = {text_start_x - 20, text_start_y + text_height/2};
+		DrawTriangle(a,b,c,WHITE);
+		} break;
+		case 1:
+		{
+		struct Vector2 a = {text_start_x- 40, text_start_y + text_height + 20};
+		struct Vector2 b = {text_start_x - 40, text_start_y + text_height + text_height + 20};
+		struct Vector2 c = {text_start_x - 20, text_start_y + text_height + 20 + text_height/2};
+		DrawTriangle(a,b,c,WHITE);
+		} break;
+		default: break;
+	}
+}
 
 void fire_lazers(float target_x_position, float target_y_position){
 	struct Vector2 left_lazer_end_point = {target_x_position -10, target_y_position};
@@ -54,9 +89,13 @@ int main ()
 	int frame_count = 0;
 
 	bool enemy_alive = true;
+	bool now_friends = false;
 	bool firing_lazers = false;
 	bool explosion = false;
 	int explosion_counter = 0;
+	int enemy_x_pos = 600;
+	int enemy_y_pos = 600;
+	int cursor_position = 0;
 	
 
 	
@@ -79,6 +118,8 @@ int main ()
 			current_screen = TITLE;
 			frame_count = 0;
 			enemy_alive = true;
+			now_friends = false;
+			cursor_position = 0;
 			
 		}
 
@@ -104,44 +145,37 @@ int main ()
 				
 				if (IsKeyPressed(KEY_ENTER))
 				{
-					current_screen = GAMEPLAY;
+					current_screen = BATTLE_HAPPENING;
 					frame_count = 0;
 				}
 				
 			} break;
-			case GAMEPLAY:
+			case BATTLE_HAPPENING:
 			{	
-				//Draws the bottom text box
-				int textbox_upper_left_x = 10;
-				int textbox_upper_left_y = 900;
-				int textbox_width = 1580;
-				int textbox_height = 370; 
-				int textbox_text_size = 50;
-				int text_start_x = textbox_upper_left_x + 40;
-				int text_start_y = textbox_upper_left_y + 40;
-				int enemy_x_pos = 600;
-				int enemy_y_pos = 600;
-				DrawRectangle(textbox_upper_left_x, textbox_upper_left_y, textbox_width, textbox_height, BLUE);
-				DrawRectangle(textbox_upper_left_x + 10, textbox_upper_left_y + 10, textbox_width - 20, textbox_height - 20, BLACK);
-				
-				
-				if(enemy_alive)
-					DrawTexture(enemy_texture, enemy_x_pos -200, enemy_y_pos - 200, WHITE);
+				draw_cold_void_textbox();
+				if(cursor_position == 0 && IsKeyReleased('S')){
+					cursor_position = 1;
+				}
+				if(cursor_position == 1 && IsKeyReleased('W')){
+					cursor_position = 0;
+				}				
 
-				if(frame_count > 100){
-					if(enemy_alive){
-						DrawText("Press space to shoot it", text_start_x, text_start_y, textbox_text_size, WHITE);
-					}
-					else{
-						DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
-					}
+				draw_cursor(cursor_position);
+				DrawText("FIRE", text_start_x, text_start_y, textbox_text_size, WHITE);
+				DrawText("BE FRIENDS", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
+				
+				if(enemy_alive){
+					DrawTexture(enemy_texture, enemy_x_pos -200, enemy_y_pos - 200, WHITE);
 				} 
-				if(IsKeyDown(' ')){
+				if(IsKeyDown(' ') && cursor_position == 0){
 					fire_lazers(enemy_x_pos, enemy_y_pos);
 					
 				}
-				if(IsKeyReleased(' ')){
+				if(IsKeyReleased(' ') && cursor_position == 0){
 					explosion = true;
+				}
+				if(IsKeyReleased(' ') && cursor_position == 1){
+					now_friends = true;
 				}
 				if(explosion){
 					explosion_counter++;
@@ -164,7 +198,18 @@ int main ()
 						explosion_counter = 0;
 					}
 				}
+				if(!enemy_alive && !explosion || enemy_alive && now_friends){
+					current_screen = BATTLE_END;
+				}
 				
+			} break;
+			case BATTLE_END:
+			{
+				if(enemy_alive){
+					DrawTexture(enemy_texture, enemy_x_pos -200, enemy_y_pos - 200, WHITE);
+				}
+				draw_cold_void_textbox();
+				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
 			} break;
 			default: break;
 		}

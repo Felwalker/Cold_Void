@@ -11,19 +11,66 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
+//declare game state data
 typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
 
-//bool debug_is_on = true;
 
-//global text box position
-int textbox_upper_left_x = 10;
-int textbox_upper_left_y = 900;
-int textbox_width = 1580;
-int textbox_height = 370; 
-int textbox_text_size = 50;
-int text_start_x = textbox_upper_left_x + 100;
-int text_start_y = textbox_upper_left_y + 100;
-int text_height = 50;
+//declare enemy_ship_data
+int explosion_counter;
+int explosion_radius;
+int explosion_duration;
+Texture enemy_texture;
+typedef enum {HOSTILE, FRIENDLY, EXPLOSION_START, EXPLODING, EXPLOSION_FADING, DEAD} EnemyShipState;
+EnemyShipState enemy_state;
+int enemy_centre_x;
+int enemy_centre_y;
+
+
+//declare text box data
+int textbox_upper_left_x;
+int textbox_upper_left_y;
+int textbox_width;
+int textbox_height; 
+int textbox_text_size;
+int text_start_x;
+int text_start_y;
+int text_height;
+
+// state machine controlling enemy state
+void enemy_ship_SM(){
+
+	switch(enemy_state){
+		case(HOSTILE):
+		{
+			DrawTexture(enemy_texture, enemy_centre_x -200, enemy_centre_y - 200, WHITE);
+		} break;
+		case(FRIENDLY):
+		{
+			DrawTexture(enemy_texture, enemy_centre_x -200, enemy_centre_y - 200, WHITE);
+		} break;
+		case(EXPLOSION_START):
+		{
+			explosion_counter = 1;
+			enemy_state = EXPLODING;
+		}break;
+		
+		case(EXPLODING):
+		{
+			DrawTexture(enemy_texture, enemy_centre_x -200, enemy_centre_y - 200, WHITE);
+			DrawCircle(enemy_centre_x, enemy_centre_y, explosion_counter, ORANGE);
+			explosion_counter= explosion_counter + 10;
+			if(explosion_counter > explosion_radius) enemy_state = EXPLOSION_FADING;
+
+		}break;
+		case(EXPLOSION_FADING):
+		{
+			if (explosion_counter % 2 == 0) DrawCircle(enemy_centre_x, enemy_centre_y, explosion_radius, RED);
+			explosion_counter++;
+			if (explosion_counter > explosion_duration + explosion_radius) enemy_state = DEAD;
+		}
+		default:break;
+	}
+}
 
 void draw_cold_void_textbox(){
 	DrawRectangle(textbox_upper_left_x, textbox_upper_left_y, textbox_width, textbox_height, BLUE);
@@ -75,26 +122,27 @@ int main ()
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
 
-	Texture enemy_texture = LoadTexture("enemy_spaceship.png");
+	// Initialise Text box
+	textbox_upper_left_x = 10;
+	textbox_upper_left_y = 900;
+	textbox_width = 1580;
+	textbox_height = 370; 
+	textbox_text_size = 50;
+	text_start_x = textbox_upper_left_x + 100;
+	text_start_y = textbox_upper_left_y + 100;
+	text_height = 50;	
 
 	//int centre_x_position = 800;  // used to reference centre of screen x position
 	//int centre_y_position = 640;	// used to reference centre of screen y position
+	
+	//initialise title data
 	int title_size = 600;
-
 	int title_x_position = -400;
 	int title_y_position = 400;
 	
 	char title_text[] = "Cold Void";
 	GameScreen current_screen = TITLE;
 	int frame_count = 0;
-
-	bool enemy_alive = true;
-	bool now_friends = false;
-	bool firing_lazers = false;
-	bool explosion = false;
-	int explosion_counter = 0;
-	int enemy_x_pos = 600;
-	int enemy_y_pos = 600;
 	int cursor_position = 0;
 	
 
@@ -117,9 +165,8 @@ int main ()
 
 			current_screen = TITLE;
 			frame_count = 0;
-			enemy_alive = true;
-			now_friends = false;
 			cursor_position = 0;
+
 			
 		}
 
@@ -145,13 +192,26 @@ int main ()
 				
 				if (IsKeyPressed(KEY_ENTER))
 				{
-					current_screen = BATTLE_HAPPENING;
+					current_screen = BATTLE_START;
 					frame_count = 0;
 				}
 				
 			} break;
+			case BATTLE_START:
+			{
+				//initialise enemy data
+				enemy_state = HOSTILE;
+				explosion_counter = 0;
+				explosion_radius = 250;
+				explosion_duration = 20;
+				enemy_texture = LoadTexture("enemy_spaceship.png");
+				enemy_centre_x = 600;
+				enemy_centre_y = 600;
+				current_screen = BATTLE_HAPPENING;
+			}
 			case BATTLE_HAPPENING:
 			{	
+				//handle text box
 				draw_cold_void_textbox();
 				if(cursor_position == 0 && IsKeyReleased('S')){
 					cursor_position = 1;
@@ -163,51 +223,29 @@ int main ()
 				draw_cursor(cursor_position);
 				DrawText("FIRE", text_start_x, text_start_y, textbox_text_size, WHITE);
 				DrawText("BE FRIENDS", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
-				
-				if(enemy_alive){
-					DrawTexture(enemy_texture, enemy_x_pos -200, enemy_y_pos - 200, WHITE);
-				} 
+
+				//handle enemy state
+				enemy_ship_SM();
+
 				if(IsKeyDown(' ') && cursor_position == 0){
-					fire_lazers(enemy_x_pos, enemy_y_pos);
+					fire_lazers(enemy_centre_x, enemy_centre_y);
 					
 				}
 				if(IsKeyReleased(' ') && cursor_position == 0){
-					explosion = true;
+					enemy_state = EXPLOSION_START;
 				}
-				if(IsKeyReleased(' ') && cursor_position == 1){
-					now_friends = true;
-				}
-				if(explosion){
-					explosion_counter++;
 				
-					if(explosion_counter > 10 && explosion_counter < 50){
-						DrawCircle(enemy_x_pos, enemy_y_pos, 100, ORANGE);
-					}
-					else if(explosion_counter > 50 && explosion_counter < 100){
-						DrawCircle(enemy_x_pos, enemy_y_pos, 200, ORANGE);
-					}
-					else if(explosion_counter > 100 && explosion_counter < 150){
-						DrawCircle(enemy_x_pos, enemy_y_pos, 300, ORANGE);
-						enemy_alive = false;
-					}
-					else if(explosion_counter > 150 && explosion_counter < 200 && explosion_counter % 2 == 0){
-						DrawCircle(enemy_x_pos, enemy_y_pos, 300, RED);
-					}
-					else if (explosion_counter > 250){
-						explosion = false;
-						explosion_counter = 0;
-					}
+				if(IsKeyReleased(' ') && cursor_position == 1){
+					enemy_state = FRIENDLY;
 				}
-				if(!enemy_alive && !explosion || enemy_alive && now_friends){
+				if(enemy_state == FRIENDLY || enemy_state == DEAD){
 					current_screen = BATTLE_END;
 				}
 				
 			} break;
 			case BATTLE_END:
 			{
-				if(enemy_alive){
-					DrawTexture(enemy_texture, enemy_x_pos -200, enemy_y_pos - 200, WHITE);
-				}
+				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
 			} break;

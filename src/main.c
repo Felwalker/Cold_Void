@@ -251,7 +251,11 @@ int main ()
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
-				draw_eye();
+				draw_head(200, 50, 1000, 800);
+				draw_eye(50,100, 20, 40, 400, 200);
+				draw_eye(50,100, 20, 40, 800, 200);
+				draw_mouth(100, 150, 40, 20, 550, 600);
+				draw_nose(700, 400, 100, 40, 40);
 			} break;
 			default: break;
 		}

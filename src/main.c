@@ -7,8 +7,11 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 */
 
+#ifndef RAYLIB_H
 #include "raylib.h"
+#endif // RAYLIB_H
 
+#include "draw_character.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 //declare game state data
@@ -248,6 +251,7 @@ int main ()
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
+				draw_eye();
 			} break;
 			default: break;
 		}

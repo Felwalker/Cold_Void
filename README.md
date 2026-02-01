@@ -79,11 +79,11 @@ If you need to build for a different OpenGL version than the default (OpenGL 3.3
 ## For OpenGLES 3.0
 `--graphics=opengles3`
 
-#Acknowledgements
+# Acknowledgements
 
 Built on top of Raylib Quickstart by Jeffery Myers
 
-# Raylib Quickstart License
+## Raylib Quickstart License
 Copyright (c) 2020-2025 Jeffery Myers
 
 This software is provided "as-is", without any express or implied warranty. In no event 

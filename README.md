@@ -44,7 +44,7 @@ DO NOT INSTALL ANOTHER MinGW-W64 from another source such as msys2, you don't ne
 * run `make`
 * you are good to go
 
-# MacOS Users
+# Build in MacOS
 * CD into the build folder
 * run `./premake5.osx gmake`
 * CD back to the root

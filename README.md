@@ -1,26 +1,13 @@
-# Raylib-Quickstart
-A simple cross platform template for setting up a project with the bleeding edge raylib code.
-Works with C or C++.
+# Cold Void
+A spacefaring RPG, inspired largely by ftl, ninja gaiden 2 (NES), pokemon red (Original game boy) and the show star trek the next generation. Currently built in C with Raylib.  Uses procedural generation to produce 2d scenes along with AI generated text to tell the story.
 
 ## Supported Platforms
-Quickstart supports the main 3 desktop platforms:
+Cold_Void supports the main 3 desktop platforms:
 * Windows
 * Linux
 * MacOS
 
-# Naming projects
-Do not name your game project 'raylib', it will conflict with the raylib library.
-
-# VSCode Users (all platforms)
-*Note* You must have a compiler toolchain installed in addition to vscode.
-
-* Download the quickstart
-* Rename the folder to your game name
-* Open the folder in VSCode
-* Run the build task ( CTRL+SHIFT+B or F5 )
-* You are good to go
-
-# Windows Users
+# Building for Windows
 There are two compiler toolchains available for windows, MinGW-W64 (a free compiler using GCC), and Microsoft Visual Studio
 ## Using MinGW-W64
 * Double click the `build-MinGW-W64.bat` file
@@ -44,13 +31,13 @@ To your path environment variable so that the compiler that came with raylib can
 
 DO NOT INSTALL ANOTHER MinGW-W64 from another source such as msys2, you don't need it.
 
-## Microsoft Visual Studio
+## Build in Microsoft Visual Studio
 * Run `build-VisualStudio2022.bat`
 * double click the `.sln` file that is generated
 * develop your game
 * you are good to go
 
-# Linux Users
+# Build in Linux
 * CD into the build folder
 * run `./premake5 gmake`
 * CD back to the root
@@ -73,8 +60,6 @@ The example uses a utility function from `path_utils.h` that will find the resou
 # Changing to C++
 Simply rename `src/main.c` to `src/main.cpp` and re-run the steps above and do a clean build.
 
-# Using your own code
-Simply remove `src/main.c` and replace it with your code, and re-run the steps above and do a clean build.
 
 # Building for other OpenGL targets
 If you need to build for a different OpenGL version than the default (OpenGL 3.3) you can specify an OpenGL version in your premake command line. Just modify the bat file or add the following to your command line
@@ -94,7 +79,11 @@ If you need to build for a different OpenGL version than the default (OpenGL 3.3
 ## For OpenGLES 3.0
 `--graphics=opengles3`
 
-# License
+#Acknowledgements
+
+Built on top of Raylib Quickstart by Jeffery Myers
+
+# Raylib Quickstart License
 Copyright (c) 2020-2025 Jeffery Myers
 
 This software is provided "as-is", without any express or implied warranty. In no event 

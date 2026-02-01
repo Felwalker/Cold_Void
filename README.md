@@ -81,7 +81,7 @@ If you need to build for a different OpenGL version than the default (OpenGL 3.3
 
 # Acknowledgements
 
-Built on top of Raylib Quickstart by Jeffery Myers
+Built on top of Raylib Quickstart by Jeffery Myers.  Build instructions based off of Quickstart build instructions.
 
 ## Raylib Quickstart License
 Copyright (c) 2020-2025 Jeffery Myers

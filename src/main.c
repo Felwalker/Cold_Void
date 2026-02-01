@@ -25,7 +25,7 @@ int explosion_counter;
 int explosion_radius;
 int explosion_duration;
 Texture enemy_texture;
-typedef enum {HOSTILE, FRIENDLY, EXPLOSION_START, EXPLODING, EXPLOSION_FADING, DEAD} EnemyShipState;
+typedef enum {NONE, HOSTILE, FRIENDLY, EXPLOSION_START, EXPLODING, EXPLOSION_FADING, DEAD} EnemyShipState;
 EnemyShipState enemy_state;
 int enemy_centre_x;
 int enemy_centre_y;
@@ -136,6 +136,13 @@ int main ()
 	text_start_x = textbox_upper_left_x + 100;
 	text_start_y = textbox_upper_left_y + 100;
 	text_height = 50;	
+	// Initialise Face Variables
+	int face_centre_x = screen_width*3/4;
+				int face_centre_y = screen_height/3;
+				int face_radius = screen_width/6;
+				Color face_skin_colour = BROWN;
+				int eye_width = face_radius/3;
+				int eye_height = face_radius/4;
 
 	//int centre_x_position = 800;  // used to reference centre of screen x position
 	//int centre_y_position = 640;	// used to reference centre of screen y position
@@ -178,6 +185,7 @@ int main ()
 		switch (current_screen){
 			case TITLE:
 			{
+				//DrawText("TITLE", 0, 0, 100, RED);
 				//DrawText("+", centre_x_position, centre_y_position, 100, RED); //work out where the centre is
 				//title colapse inward
 				if(title_size > 10)	{
@@ -204,18 +212,31 @@ int main ()
 			} break;
 			case BATTLE_START:
 			{
+			//	DrawText("BATTLE_START", 0, 0, 100, RED);
 				//initialise enemy data
-				enemy_state = HOSTILE;
+				enemy_state = NONE;
 				explosion_counter = 0;
 				explosion_radius = 250;
 				explosion_duration = 20;
 				enemy_texture = LoadTexture("enemy_spaceship.png");
 				enemy_centre_x = 600;
 				enemy_centre_y = 600;
-				current_screen = BATTLE_HAPPENING;
-			}
+
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
+				draw_cold_void_textbox();
+				DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
+				DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
+			
+				if(IsKeyReleased(' ')){
+					enemy_state = HOSTILE;
+					current_screen = BATTLE_HAPPENING;
+				}
+
+			} break;
 			case BATTLE_HAPPENING:
 			{	
+			//	DrawText("BATTLE_HAPPENING", 0, 0, 100, RED);
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
 				//handle text box
 				draw_cold_void_textbox();
 				if(cursor_position == 0 && IsKeyReleased('S')){
@@ -250,26 +271,12 @@ int main ()
 			} break;
 			case BATTLE_END:
 			{
+			//	DrawText("BATTLE_END", 0, 0, 100, RED);
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
-				//draw_head(screen_width/4, screen_height/10, screen_width/4, screen_height/2, 1, WHITE, BLUE, BLACK, BROWN, WHITE);
-				// draw head in parts
-				int face_centre_x = screen_width/2;
-				int face_centre_y = screen_height/3;
-				int face_radius = screen_width/6;
-				Color face_skin_colour = BROWN;
-				int eye_width = face_radius/3;
-				int eye_height = face_radius/4;
-				DrawCircle(face_centre_x, face_centre_y, face_radius, face_skin_colour);
-            	draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
-            	draw_diamond_eye(face_centre_x - eye_width - 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
-					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
-				draw_diamond_eye(face_centre_x + 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
-					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
-				
-				draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
-				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height + eye_width + eye_height + eye_height, eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
+
             
 			} break;
 			default: break;

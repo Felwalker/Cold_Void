@@ -98,55 +98,15 @@ void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, i
     
 }
 
-/** head drawing function, still kinda broken which is why it is commented out
-void draw_head(int start_x, int start_y, int radius, int height, int type, 
-    int eye_width, int eye_height, int iris_size, int pupil_size, int eye_ratio,
-    int eye_eye_sep, int eye_nose_sep, int nose_mouth_sep, int mouth_chin_sep,  int chin_width,
-     Color sclera_colour, Color iris_colour, Color pupil_colour, Color skin_colour, Color teeth_colour ){
-    switch(type){
-        case (0):{
-            struct Rectangle r = {start_x, start_y, radius*2, height};
-            DrawRectangleRounded(r, 0.8, 10, skin_colour); 
-        }break;
-        case(1):
-        {
-            
-            DrawCircle(start_x + radius, start_y + radius, radius, skin_colour);
-            draw_square_jaw(start_x + radius, start_y + radius, radius, chin_width, height/2, skin_colour);
-            draw_diamond_eye(start_x + radius - eye_eye_sep/2, start_y + radius, eye_width/eye_ratio, eye_width*((eye_ratio-2)/eye_ratio),
-               
-                   sclera_colour, iris_colour, pupil_colour, skin_colour);
-            draw_diamond_eye(start_x+width/5+width/5+width/5, start_y + height/2,
-                width/5, width/8,
-                 width/10, width/20,
-                  width/10, width/20,
-                   sclera_colour, iris_colour, pupil_colour, skin_colour);
-            
-          
-            struct Vector2 a = {start_x, start_y + height/2}; // left triangle point a
-            
-	        struct Vector2 b = {start_x + width/2, start_y + height};
-           
-	        struct Vector2 c = {start_x + width, start_y + height/2};
-            //DrawTriangle(a, b, c, YELLOW);
-            //DrawText("X", start_x, start_y, 30, RED);
-            //DrawText("X", start_x + width/2, start_y + height/2, 30, RED);
-            //DrawText("A",start_x,  start_y + height/2, 30, RED);
-            //DrawText("B", start_x + width/2, start_y + height, 30, RED);
-            //DrawText("C", start_x + width, start_y + height/2, 30, RED);
-
-            draw_diamond_mouth(start_x+width/2-width/5+width/10, start_y + width,
-                width/5, width/8,
-                 width/10, width/20,
-                   teeth_colour, skin_colour);
-
-            draw_nose(start_x + width/2, start_y + width/2, width/5, width/10, width/10, skin_colour);
-            
-        }break;
-        default:break;
-    }
-
-
-           
+void draw_head(int face_centre_x, int face_centre_y, int face_radius, Color face_skin_colour, int eye_height, int eye_width){
+    DrawCircle(face_centre_x, face_centre_y, face_radius, face_skin_colour);
+            	draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
+            	draw_diamond_eye(face_centre_x - eye_width - 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
+				draw_diamond_eye(face_centre_x + 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
+				
+				draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
+				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height + eye_width + eye_height + eye_height, eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
 }
-    */
+

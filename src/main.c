@@ -17,6 +17,8 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 //declare game state data
 typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
 
+const int screen_width = 1600;
+const int screen_height = 1280;
 
 //declare enemy_ship_data
 int explosion_counter;
@@ -120,7 +122,7 @@ int main ()
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1600, 1280, "Cold Void");
+	InitWindow(screen_width, screen_height, "Cold Void");
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
@@ -251,11 +253,24 @@ int main ()
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
-				draw_head(200, 50, 1000, 800);
-				draw_eye(50,100, 20, 40, 400, 200);
-				draw_eye(50,100, 20, 40, 800, 200);
-				draw_mouth(100, 150, 40, 20, 550, 600);
-				draw_nose(700, 400, 100, 40, 40);
+				//draw_head(screen_width/4, screen_height/10, screen_width/4, screen_height/2, 1, WHITE, BLUE, BLACK, BROWN, WHITE);
+				// draw head in parts
+				int face_centre_x = screen_width/2;
+				int face_centre_y = screen_height/3;
+				int face_radius = screen_width/6;
+				Color face_skin_colour = BROWN;
+				int eye_width = face_radius/3;
+				int eye_height = face_radius/4;
+				DrawCircle(face_centre_x, face_centre_y, face_radius, face_skin_colour);
+            	draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
+            	draw_diamond_eye(face_centre_x - eye_width - 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
+				draw_diamond_eye(face_centre_x + 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+					eye_height/2, eye_height -2, eye_height/2, WHITE, BLUE, BLACK, face_skin_colour);
+				
+				draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
+				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height + eye_width + eye_height + eye_height, eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
+            
 			} break;
 			default: break;
 		}

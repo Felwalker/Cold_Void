@@ -31,25 +31,20 @@ void draw_diamond_eye(int pos_x, int pos_y, int out_w, int in_w, int out_h, int 
 
 void draw_diamond_mouth(int pos_x, int pos_y, int out_w, int in_w, int out_h, int in_h, Color teeth_colour,
                  Color skin_colour ){
-    int tw = (out_w - in_w)/2; // tw stands for triangle width (at the eye's corner)
-    int eoh = (out_h - in_h)/2; // eoh stands for eye over hang hie
-    int rsp_x = pos_x + tw;  // Rectangle Start Position x
-    int rsp_y = pos_y + eoh; // Rectangle Start Position y
-
-    DrawRectangle(rsp_x -tw, rsp_y - eoh, in_w+tw*2, in_h +eoh*2, skin_colour);  //eyes background
+     DrawRectangle(pos_x, pos_y, out_w, out_h, skin_colour);  //eyes background
     
-    DrawRectangle(rsp_x, rsp_y, in_w, in_h, teeth_colour);
-    struct Vector2 la = {rsp_x -tw, rsp_y +in_h/2}; // left triangle point a
-	struct Vector2 lb = {rsp_x, rsp_y};
-	struct Vector2 lc = {rsp_x, rsp_y + in_h};
-	DrawTriangle(lb,la,lc,teeth_colour);
-    struct Vector2 ra = {rsp_x + in_w, rsp_y};
-    struct Vector2 rb = {rsp_x + in_w + tw, rsp_y + in_h/2};
-    struct Vector2 rc = {rsp_x + in_w, rsp_y + in_h};
-    DrawTriangle(ra, rc, rb, teeth_colour);
-
-    DrawRectangle(rsp_x, rsp_y -eoh, in_w, eoh, skin_colour); // top cover
-    DrawRectangle(rsp_x, rsp_y + in_h, in_w, eoh, skin_colour); // bottom cover
+    DrawRectangle(pos_x + (out_w - in_w)/2, pos_y, in_w, out_h, teeth_colour);
+    struct Vector2 la = {pos_x , pos_y + out_h/2}; // left triangle point a
+	struct Vector2 lb = {pos_x + (out_w - in_w)/2, pos_y + out_h};
+	struct Vector2 lc = {pos_x + (out_w - in_w)/2, pos_y};
+	DrawTriangle(la,lb,lc,teeth_colour);
+    struct Vector2 ra = {pos_x + (out_w + in_w)/2 , pos_y};
+    struct Vector2 rb = {pos_x + (out_w + in_w)/2, pos_y + out_h};
+    struct Vector2 rc = {pos_x+ out_w,pos_y + out_h/2 };
+    DrawTriangle(ra, rb, rc, teeth_colour);
+    
+    DrawRectangle(pos_x, pos_y, out_w, in_h/2, skin_colour); // top cover
+    DrawRectangle(pos_x, pos_y+ out_h -in_h/2, out_w, in_h/2, skin_colour); // bottom cover
 
 }
 
@@ -88,12 +83,12 @@ void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, i
     //double theta = acos((face_centre_x + chin_width/2)/dist);
     // and the angle between the line to the tangent point and the line to point c
     double phi = acos(face_radius/dist);
-    struct Vector2 d = {face_centre_x+face_radius*cos(theta - phi), face_centre_y + face_radius*sin(theta - phi)};
+    struct Vector2 d = {face_centre_x+face_radius*cos(theta - phi), face_centre_y - face_radius*sin(theta - phi)};
   //  DrawText("D", face_radius*cos(theta - phi), face_radius*sin(theta - phi), 30, RED);
     
     DrawTriangle(a, c, d, colour);
     // the face is a mirror symmetric, as faces are
-    struct Vector2 e = {face_centre_x-face_radius*cos(theta - phi), face_centre_y + face_radius*sin(theta - phi)};
+    struct Vector2 e = {face_centre_x-face_radius*cos(theta - phi), face_centre_y - face_radius*sin(theta - phi)};
     DrawTriangle(e, b, a, colour);
     
 }
@@ -111,6 +106,6 @@ void draw_head(int face_centre_x, int face_centre_y, int face_radius, Color face
 					eye_height/2, iris_size_offset, pupil_size_offset, WHITE, BLUE, BLACK, face_skin_colour);
 				
 				draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
-				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height + eye_width + eye_height + eye_height, eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
+				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height*7/2 , eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
 }
 

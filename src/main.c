@@ -13,6 +13,8 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 #include "draw_character.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
+#include <stdlib.h>
+#include <time.h>
 
 //declare game state data
 typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
@@ -138,11 +140,14 @@ int main ()
 	text_height = 50;	
 	// Initialise Face Variables
 	int face_centre_x = screen_width*3/4;
-				int face_centre_y = screen_height/3;
-				int face_radius = screen_width/6;
-				Color face_skin_colour = BROWN;
-				int eye_width = face_radius/3;
-				int eye_height = face_radius/4;
+	int face_centre_y = screen_height/3;
+	int face_radius = screen_width/6;
+	Color face_skin_colour = BROWN;
+	int eye_width = face_radius/3;
+	int eye_height = face_radius/4;
+	srand(time(NULL)); //seed random number generator with the time
+	int iris_size_off = rand() % 10;
+    int pupil_size_off = rand() % 10;
 
 	//int centre_x_position = 800;  // used to reference centre of screen x position
 	//int centre_y_position = 640;	// used to reference centre of screen y position
@@ -178,6 +183,8 @@ int main ()
 			current_screen = TITLE;
 			frame_count = 0;
 			cursor_position = 0;
+			iris_size_off = rand() % 10;
+            pupil_size_off = rand() % 10;
 
 			
 		}
@@ -222,7 +229,7 @@ int main ()
 				enemy_centre_x = 600;
 				enemy_centre_y = 600;
 
-				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
 				draw_cold_void_textbox();
 				DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
 				DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
@@ -236,7 +243,7 @@ int main ()
 			case BATTLE_HAPPENING:
 			{	
 			//	DrawText("BATTLE_HAPPENING", 0, 0, 100, RED);
-				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
 				//handle text box
 				draw_cold_void_textbox();
 				if(cursor_position == 0 && IsKeyReleased('S')){
@@ -272,7 +279,7 @@ int main ()
 			case BATTLE_END:
 			{
 			//	DrawText("BATTLE_END", 0, 0, 100, RED);
-				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width);
+				draw_head(face_centre_x, face_centre_y, face_radius, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);

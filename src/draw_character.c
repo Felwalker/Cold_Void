@@ -93,19 +93,18 @@ void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, i
     
 }
 
-void draw_head(int face_centre_x, int face_centre_y, int face_radius, Color face_skin_colour, int eye_height, int eye_width, int iris_size_offset, int pupil_size_offset){
-  
-    
-    //int iris_size_off = 5;
-    //int pupil_size_off = 5;
+void draw_head(int face_centre_x, int face_centre_y, int eye_head_off, int eye_eye_off, int eye_vert_off,
+                Color face_skin_colour, int eye_height, int eye_width, int iris_size_offset, int pupil_size_offset)
+{
+  int face_radius = (eye_eye_off + eye_head_off*2 + eye_width*2)/2;
     DrawCircle(face_centre_x, face_centre_y, face_radius, face_skin_colour);
-            	draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
-            	draw_diamond_eye(face_centre_x - eye_width - 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+    draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
+    draw_diamond_eye(face_centre_x - eye_width - eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4, eye_height, 
 					eye_height/2, iris_size_offset, pupil_size_offset, WHITE, BLUE, BLACK, face_skin_colour);
-				draw_diamond_eye(face_centre_x + 40, face_centre_y, eye_width, eye_width*3/4, eye_height, 
+	draw_diamond_eye(face_centre_x + eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4, eye_height, 
 					eye_height/2, iris_size_offset, pupil_size_offset, WHITE, BLUE, BLACK, face_skin_colour);
 				
-				draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
-				draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height*7/2 , eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
+	draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
+	draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height*7/2 , eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
 }
 

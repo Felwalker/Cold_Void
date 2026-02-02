@@ -148,9 +148,17 @@ int main ()
 	
 	int iris_size_off = rand() % 10;
     int pupil_size_off = rand() % 10;
-	int eeo = 20 + rand() % 120; //eye_eye_offset, sets the distance between eyes
-	int eho = 40 + rand() % 40; //eye_head_offset, sets the distance between eyes and the side of the head
+	int eeo = 20 + rand() % 120; //eye_eye_offset, sets the distance between eyes inner edge of eyes
+	int eho = 40 + rand() % 40; //eye_head_offset, sets the distance between eyes outer edge and the side of the head
 	int evo = -40 + rand() % 100; // eye vertical offset, sets where eye is vertically relative to centre of head
+	int eno = 5 + rand() % 20; //eye nose offset, sets vertical distance between bottom of eyes and top of nose
+	int nmo = 10 + rand() % 40; // nose mouth offset, sets vertical distance between bottom of nose and top of mouth
+	int mco = 20 + rand() % 40; // mouch chin offset, sets vertical distance between bottom of mouth and chin
+	int nose_th = 20 + rand() %40; // height of top of nose
+	int nose_lh = 5 + rand() % 20; // height of bottom of nose
+	int nose_w = 20 + rand() % 40; // width of nose
+	int mouth_h = 20 + rand() % 100; // height of mouth
+	int	mouth_w = 40 + rand() % 150; // width of mouth
 
 	//int centre_x_position = 800;  // used to reference centre of screen x position
 	//int centre_y_position = 640;	// used to reference centre of screen y position
@@ -187,6 +195,7 @@ int main ()
 			current_screen = TITLE;
 			frame_count = 0;
 			cursor_position = 0;
+			// generate new face
 			eye_width = 40 + rand() % 120;
 			eye_height = 20 + rand() % 100;
 			iris_size_off = rand() % 10;
@@ -194,6 +203,14 @@ int main ()
 			eeo = 20 + rand() % 120;
 	        eho = 40 + rand() % 40;
 			evo = -40 + rand() % 100;
+			eno = 5 + rand()% 20;
+			nmo = 10 + rand() % 40; 
+			mco = 20 + rand() % 40; 
+			nose_th = 20 + rand() %40; 
+			nose_lh = 5 + rand() % 20; 
+			nose_w = 20 + rand() % 40; 
+			mouth_h = 20 + rand() % 100; 
+			mouth_w = 40 + rand() % 150; 
 
 			
 		}
@@ -238,7 +255,23 @@ int main ()
 				enemy_centre_x = 600;
 				enemy_centre_y = 600;
 
-				draw_head(face_centre_x, face_centre_y, eeo, eho,evo, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
+				draw_head(face_centre_x,
+							 face_centre_y,
+							  eeo,
+							   eho,
+							   evo,eno,
+							   nmo,
+							   mco,
+							   nose_th,
+							   nose_lh,
+							   nose_w,
+							   mouth_h,
+							   mouth_w,
+							    face_skin_colour,
+								 eye_height,
+								  eye_width,
+								   iris_size_off,
+								    pupil_size_off);
 				draw_cold_void_textbox();
 				DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
 				DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
@@ -252,7 +285,23 @@ int main ()
 			case BATTLE_HAPPENING:
 			{	
 			//	DrawText("BATTLE_HAPPENING", 0, 0, 100, RED);
-				draw_head(face_centre_x, face_centre_y, eeo, eho,evo, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
+				draw_head(face_centre_x,
+							 face_centre_y,
+							  eeo,
+							   eho,
+							   evo,eno,
+							   nmo,
+							   mco,
+							   nose_th,
+							   nose_lh,
+							   nose_w,
+							   mouth_h,
+							   mouth_w,
+							    face_skin_colour,
+								 eye_height,
+								  eye_width,
+								   iris_size_off,
+								    pupil_size_off);
 				//handle text box
 				draw_cold_void_textbox();
 				if(cursor_position == 0 && IsKeyReleased('S')){
@@ -288,7 +337,23 @@ int main ()
 			case BATTLE_END:
 			{
 			//	DrawText("BATTLE_END", 0, 0, 100, RED);
-				draw_head(face_centre_x, face_centre_y, eeo, eho,evo, face_skin_colour, eye_height, eye_width, iris_size_off, pupil_size_off);
+				draw_head(face_centre_x,
+							 face_centre_y,
+							  eeo,
+							   eho,
+							   evo,eno,
+							   nmo,
+							   mco,
+							   nose_th,
+							   nose_lh,
+							   nose_w,
+							   mouth_h,
+							   mouth_w,
+							    face_skin_colour,
+								 eye_height,
+								  eye_width,
+								   iris_size_off,
+								    pupil_size_off);				
 				enemy_ship_SM();
 				draw_cold_void_textbox();
 				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);

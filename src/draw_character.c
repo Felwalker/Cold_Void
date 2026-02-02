@@ -6,8 +6,9 @@
 
 
 void draw_diamond_eye(int pos_x, int pos_y, int out_w, int in_w, int out_h, int in_h,
-                int iris_size_offset, int pupil_size_offset, Color sclera_colour, Color iris_colour, Color pupil_colour, Color skin_colour ){
-
+                int iris_size_offset, int pupil_size_offset, Color sclera_colour, Color iris_colour,
+                 Color pupil_colour, Color skin_colour )
+{
     DrawRectangle(pos_x, pos_y, out_w, out_h, skin_colour);  //eyes background
     
     DrawRectangle(pos_x + (out_w - in_w)/2, pos_y, in_w, out_h, sclera_colour);
@@ -30,7 +31,8 @@ void draw_diamond_eye(int pos_x, int pos_y, int out_w, int in_w, int out_h, int 
 }
 
 void draw_diamond_mouth(int pos_x, int pos_y, int out_w, int in_w, int out_h, int in_h, Color teeth_colour,
-                 Color skin_colour ){
+                 Color skin_colour )
+{
      DrawRectangle(pos_x, pos_y, out_w, out_h, skin_colour);  //eyes background
     
     DrawRectangle(pos_x + (out_w - in_w)/2, pos_y, in_w, out_h, teeth_colour);
@@ -49,7 +51,8 @@ void draw_diamond_mouth(int pos_x, int pos_y, int out_w, int in_w, int out_h, in
 }
 
 
-void draw_nose(float start_x, float start_y, float top_h, float bot_h, float width, Color skin_colour){
+void draw_nose(float start_x, float start_y, float top_h, float bot_h, float width, Color skin_colour)
+{
     DrawRectangle(start_x, start_y, width, top_h + bot_h, skin_colour);
     struct Vector2 ta = {start_x, start_y};
     struct Vector2 tb = {start_x + width, start_y + top_h};
@@ -60,7 +63,8 @@ void draw_nose(float start_x, float start_y, float top_h, float bot_h, float wid
 
 }
 
-void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, int chin_width, int chin_height, Color colour){
+void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, int chin_width, int chin_height, Color colour)
+{
     // the head will be built out of 4 pieces, a circle and three trianges
     // the three triangles all start from the centre of the circle, point a
     struct Vector2 a = {face_centre_x, face_centre_y};
@@ -93,18 +97,34 @@ void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, i
     
 }
 
-void draw_head(int face_centre_x, int face_centre_y, int eye_head_off, int eye_eye_off, int eye_vert_off,
-                Color face_skin_colour, int eye_height, int eye_width, int iris_size_offset, int pupil_size_offset)
+void draw_head(int face_centre_x, int face_centre_y, 
+                int eye_head_off, int eye_eye_off, int eye_vert_off, int eye_nose_off, int nose_mouth_off, int mouth_chin_off,
+                int nose_upper_height, int nose_lower_height, int nose_width, 
+                int mouth_height, int mouth_width,
+                Color face_skin_colour,
+                 int eye_height, int eye_width, int iris_size_offset, int pupil_size_offset)
 {
-  int face_radius = (eye_eye_off + eye_head_off*2 + eye_width*2)/2;
+    int face_radius = (eye_eye_off + eye_head_off*2 + eye_width*2)/2;
+    int face_height = eye_eye_off + eye_height + eye_nose_off + nose_upper_height
+                         + nose_lower_height + nose_mouth_off + mouth_height + nose_mouth_off;
+    
     DrawCircle(face_centre_x, face_centre_y, face_radius, face_skin_colour);
-    draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius, eye_height + eye_width + eye_height + eye_height*2, face_skin_colour);
-    draw_diamond_eye(face_centre_x - eye_width - eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4, eye_height, 
-					eye_height/2, iris_size_offset, pupil_size_offset, WHITE, BLUE, BLACK, face_skin_colour);
-	draw_diamond_eye(face_centre_x + eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4, eye_height, 
-					eye_height/2, iris_size_offset, pupil_size_offset, WHITE, BLUE, BLACK, face_skin_colour);
+
+    draw_square_jaw(face_centre_x, face_centre_y, face_radius, face_radius,
+                     face_height, face_skin_colour);
+
+    draw_diamond_eye(face_centre_x - eye_width - eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4,
+                     eye_height,	eye_height/2, iris_size_offset, pupil_size_offset,
+                     WHITE, BLUE, BLACK, face_skin_colour);
+
+	draw_diamond_eye(face_centre_x + eye_eye_off/2, face_centre_y + eye_vert_off, eye_width, eye_width*3/4,
+                     eye_height, eye_height/2, iris_size_offset, pupil_size_offset,
+                      WHITE, BLUE, BLACK, face_skin_colour);
 				
-	draw_nose(face_centre_x, face_centre_y + eye_height, eye_width, eye_height, eye_height, face_skin_colour);
-	draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + eye_height*7/2 , eye_width, eye_width*3/4, eye_height, eye_height/2, WHITE, face_skin_colour);
+	draw_nose(face_centre_x, face_centre_y + eye_height + eye_nose_off, nose_upper_height, nose_lower_height,
+                 nose_width, face_skin_colour);
+
+	draw_diamond_mouth(face_centre_x - eye_width/2, face_centre_y + face_height - mouth_height - mouth_chin_off, mouth_width, mouth_width*3/4,
+                         mouth_height, mouth_height/2, WHITE, face_skin_colour);
 }
 

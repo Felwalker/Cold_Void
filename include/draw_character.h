@@ -1,13 +1,43 @@
-void draw_eye(int tw, int in_w, int eoh, int in_h, int start_x, int start_y);
-void draw_diamond_mouth(int pos_x, int pos_y, int out_w, int in_w, int out_h, int in_h, Color teeth_colour,
-                 Color skin_colour );
-void draw_nose(float start_x, float start_y, float top_h, float bot_h, float width, Color skin_colour);
-void draw_head(int face_centre_x, int face_centre_y, 
-                int eye_head_off, int eye_eye_off, int eye_vert_off, int eye_nose_off, int nose_mouth_off, int mouth_chin_off,
-                int nose_upper_height, int nose_lower_height, int nose_width, 
-                int mouth_height, int mouth_width,
-                Color face_skin_colour,
-                 int eye_height, int eye_width, int iris_size_offset, int pupil_size_offset);
-void draw_square_jaw(int face_centre_x, int face_centre_y, double face_radius, int chin_width, int chin_height, Color colour);
-void draw_diamond_eye(int pos_x, int pos_y, int out_w, int in_w, int out_h, int in_h,
-                int iris_radius, int pupil_radius, Color sclera_colour, Color iris_colour, Color pupil_colour, Color skin_colour );
+
+
+typedef struct {
+    int centre_x;
+    int centre_y; 
+    int eye_head_off;
+    int eye_eye_off; //eye_eye_offset, sets the distance between the inner edges of the eyes
+    int eye_vert_off;
+    int eye_nose_off;
+    int nose_mouth_off;
+    int mouth_chin_x_off;
+    int mouth_chin_y_off;
+    int nose_upper_height;
+    int nose_lower_height;
+    int nose_width;
+    int mouth_height;
+    int mouth_out_width;
+    int mouth_in_width;
+    int eye_out_width_off;
+    int eye_out_height_off;
+    int eye_in_height_off;
+    int eye_in_width_off;
+    int iris_size_off;
+    int pupil_radius;
+    Color skin_colour;
+    Color sclera_colour;
+    Color iris_colour;
+    Color pupil_colour;
+    Color teeth_colour;
+} Face;
+
+int eye_in_w(Face);
+int eye_out_w(Face);
+int eye_in_h(Face);
+int eye_out_h(Face);
+int face_radius(Face);
+int face_height(Face);
+
+void draw_diamond_mouth(Face);
+void draw_nose(Face);
+void draw_head(Face);
+void draw_square_jaw(Face);
+void draw_diamond_eye(int pos_x, int pos_y, Face );

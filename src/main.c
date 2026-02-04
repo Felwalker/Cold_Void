@@ -15,6 +15,9 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
+#include <curl/curl.h>
+#include <string.h>
 
 //declare game state data
 typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
@@ -118,6 +121,85 @@ void fire_lazers(float target_x_position, float target_y_position){
 
 }
 
+struct Memory {
+    char *response;
+    size_t size;
+};
+
+// Callback function to handle the data received from the API
+static size_t ResponseCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+    size_t totalSize = size * nmemb;
+    struct Memory *mem = (struct Memory *)userp;
+
+    printf(". %zu %zu\n", size, nmemb);
+    char *ptr = realloc(mem->response, mem->size + totalSize + 1);
+    if (ptr == NULL) {
+        printf("Not enough memory to allocate buffer.\n");
+        return 0;
+    }
+
+    mem->response = ptr;
+    memcpy(&(mem->response[mem->size]), contents, totalSize);
+    mem->size += totalSize;
+    mem->response[mem->size] = '\0';
+
+    return totalSize;
+}
+
+
+char *ollama_request(void) {
+    CURL *curl;
+    CURLcode res;
+    struct Memory chunk;
+
+    chunk.response = malloc(1);  // Initialise memory
+    chunk.size = 0;
+
+    // Initialise libcurl
+    curl = curl_easy_init();
+    if(curl) {
+        // Set the target URL
+        curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:11434/api/generate");
+
+        // Specify the JSON data to send
+        // Using "stream": false to get a single complete JSON response
+        const char *json_data = "{\"model\": \"llama3\", \"prompt\": \"Say hello\", \"stream\": false}";
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data);
+
+        // Optional: Set Content-Type header to application/json
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        /* 
+           By default, libcurl writes the response to stdout.
+           If you don't set CURLOPT_WRITEFUNCTION, it uses a default 
+           callback that calls fwrite() on the 'stdout' stream.
+        */
+
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ResponseCallback);
+
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+
+        // Perform the request
+        res = curl_easy_perform(curl);
+
+        // Check for errors
+        if(res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+        else{
+            printf("Response data: \n%s\n", chunk.response);
+        }
+
+        // Cleanup
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+    }
+
+    return chunk.response;
+}
+
 int main ()
 {
 	// Tell the window to use vsync and work on high DPI displays
@@ -184,6 +266,19 @@ int main ()
 	GameScreen current_screen = TITLE;
 	int frame_count = 0;
 	int cursor_position = 0;
+
+	//make first ollama_request for text and store it
+	char *message_ptr = ollama_request();
+	char first_words[10000];
+
+	if( message_ptr != NULL) {
+		strcpy(first_words, message_ptr);
+		free(message_ptr);
+	}
+
+	
+
+
 	
 
 	
@@ -272,8 +367,9 @@ int main ()
 
 				draw_head(guy);
 				draw_cold_void_textbox();
-				DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
-				DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
+				DrawText(first_words, text_start_x, text_start_y, textbox_text_size, WHITE);
+				//DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
+				//DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
 			
 				if(IsKeyReleased(' ')){
 					enemy_state = HOSTILE;

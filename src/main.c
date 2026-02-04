@@ -18,6 +18,7 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include <stdio.h>
 #include <curl/curl.h>
 #include <string.h>
+#include <cJSON.h>
 
 //declare game state data
 typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
@@ -200,6 +201,43 @@ char *ollama_request(void) {
     return chunk.response;
 }
 
+
+int get_msg_from_response(const char * const response, char* msg, size_t size)
+{
+   
+    const cJSON *msg_json = NULL;
+    int status = 0;
+    cJSON *response_json = cJSON_Parse(response);
+    if (response_json == NULL)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL)
+        {
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        }
+        status = 0;
+        goto end;
+    }
+
+    msg_json = cJSON_GetObjectItemCaseSensitive(response_json, "response");
+    if (cJSON_IsString(msg_json) && (msg_json->valuestring != NULL))
+    {
+        strncpy(msg, msg_json->valuestring, size -1);
+		msg[size -1] ; '\0';
+		status =1;
+		//printf("Checking monitor \"%s\"\n", name->valuestring);
+    }
+	else{
+		status = 0;
+		fprintf(stderr, "No response");
+	}
+
+
+end:
+    cJSON_Delete(response_json);
+    return status;
+}
+
 int main ()
 {
 	// Tell the window to use vsync and work on high DPI displays
@@ -269,10 +307,10 @@ int main ()
 
 	//make first ollama_request for text and store it
 	char *message_ptr = ollama_request();
-	char first_words[10000];
+	char first_words[1000];
 
 	if( message_ptr != NULL) {
-		strcpy(first_words, message_ptr);
+		get_msg_from_response(message_ptr, first_words, 1000);
 		free(message_ptr);
 	}
 

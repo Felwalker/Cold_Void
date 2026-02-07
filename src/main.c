@@ -88,6 +88,22 @@ void draw_cold_void_textbox(){
 	DrawRectangle(textbox_upper_left_x + 10, textbox_upper_left_y + 10, textbox_width - 20, textbox_height - 20, BLACK);
 }
 
+void draw_text_wrapped(const char *text){
+	// first we copy the first n characters to a substring
+	int n = 0;
+	int subtext_length = 55; // length of substring
+	char subtext[subtext_length +1];
+	for(int j = 0; j < 6; j++){
+		for(int i = 0; i < subtext_length; i++){
+			subtext[i] = text[i + n];
+		}
+		subtext[subtext_length] = '\0';
+		DrawText(subtext, text_start_x, text_start_y + text_height*j , textbox_text_size, WHITE);
+		n = n + subtext_length;
+	}
+		
+}
+
 void draw_cursor(int position){
 	switch(position){
 		case 0:
@@ -148,7 +164,7 @@ static size_t ResponseCallback(void *contents, size_t size, size_t nmemb, void *
 }
 
 
-char *ollama_request(void) {
+char *ollama_request(const char* req) {
     CURL *curl;
     CURLcode res;
     struct Memory chunk;
@@ -164,7 +180,7 @@ char *ollama_request(void) {
 
         // Specify the JSON data to send
         // Using "stream": false to get a single complete JSON response
-        const char *json_data = "{\"model\": \"llama3\", \"prompt\": \"Say hello\", \"stream\": false}";
+        const char *json_data = req;
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data);
 
         // Optional: Set Content-Type header to application/json
@@ -225,7 +241,6 @@ int get_msg_from_response(const char * const response, char* msg, size_t size)
         strncpy(msg, msg_json->valuestring, size -1);
 		msg[size -1] ; '\0';
 		status =1;
-		//printf("Checking monitor \"%s\"\n", name->valuestring);
     }
 	else{
 		status = 0;
@@ -258,8 +273,8 @@ int main ()
 	textbox_width = 1580;
 	textbox_height = 370; 
 	textbox_text_size = 50;
-	text_start_x = textbox_upper_left_x + 100;
-	text_start_y = textbox_upper_left_y + 100;
+	text_start_x = textbox_upper_left_x + 50;
+	text_start_y = textbox_upper_left_y + 50;
 	text_height = 50;	
 	// Initialise Face Variables
 	int face_centre_x = screen_width*3/4;
@@ -306,7 +321,11 @@ int main ()
 	int cursor_position = 0;
 
 	//make first ollama_request for text and store it
-	char *message_ptr = ollama_request();
+	char request[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
+							 "You are informing the captain that we have encountered a spaceship.  Ask the captain"
+							  "if they wish to prepare for battle or attempt to communicate.  Keep your response to"
+							   "a single paragraph of less then 200 characters.\", \"stream\": false}";
+	char *message_ptr = ollama_request(request);
 	char first_words[1000];
 
 	if( message_ptr != NULL) {
@@ -405,7 +424,8 @@ int main ()
 
 				draw_head(guy);
 				draw_cold_void_textbox();
-				DrawText(first_words, text_start_x, text_start_y, textbox_text_size, WHITE);
+				draw_text_wrapped(first_words);
+				//DrawText(first_words, text_start_x, text_start_y, textbox_text_size, WHITE);
 				//DrawText("WHAT SHOULD WE DO CAPTAIN!", text_start_x, text_start_y, textbox_text_size, WHITE);
 				//DrawText("(PRESS SPACE TO CONTINUE)", text_start_x, text_start_y + text_height + 20, textbox_text_size, WHITE);
 			

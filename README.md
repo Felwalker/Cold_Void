@@ -3,11 +3,14 @@ A spacefaring RPG, inspired largely by ftl, ninja gaiden 2 (NES), pokemon red (O
 
 ## Supported Platforms
 Cold_Void supports the main 3 desktop platforms:
-* Windows
+* Windows (currently broken)
 * Linux
-* MacOS
+* MacOS (currently broken)
 
-# Building for Windows
+# Install Ollama
+Current build makes use of ollama, running Llama 3 locally.  I suggest using the ollama contrainer found at https://hub.docker.com/r/ollama/ollama.  Follow the install instructions and run the container before running Cold Void or the program will misbehave.  Make sure you have the container running and llama3 running before you execute the program.
+
+# Building for Windows (currently broken, only Linux build is currently working)
 There are two compiler toolchains available for windows, MinGW-W64 (a free compiler using GCC), and Microsoft Visual Studio
 ## Using MinGW-W64
 * Double click the `build-MinGW-W64.bat` file
@@ -31,7 +34,7 @@ To your path environment variable so that the compiler that came with raylib can
 
 DO NOT INSTALL ANOTHER MinGW-W64 from another source such as msys2, you don't need it.
 
-## Build in Microsoft Visual Studio
+## Build in Microsoft Visual Studio (currently broken, only Linux build is currently working)
 * Run `build-VisualStudio2022.bat`
 * double click the `.sln` file that is generated
 * develop your game
@@ -44,7 +47,7 @@ DO NOT INSTALL ANOTHER MinGW-W64 from another source such as msys2, you don't ne
 * run `make`
 * you are good to go
 
-# Build in MacOS
+# Build in MacOS (currently broken, only Linux build is currently working)
 * CD into the build folder
 * run `./premake5.osx gmake`
 * CD back to the root

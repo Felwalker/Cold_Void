@@ -164,7 +164,7 @@ static size_t ResponseCallback(void *contents, size_t size, size_t nmemb, void *
 }
 
 
-char *ollama_request(const char* req) {
+int ollama_request(const char* req, char* res_buffer) {
     CURL *curl;
     CURLcode res;
     struct Memory chunk;
@@ -207,14 +207,18 @@ char *ollama_request(const char* req) {
         }
         else{
             printf("Response data: \n%s\n", chunk.response);
+			strncpy(res_buffer, chunk.response, chunk.size);
         }
 
         // Cleanup
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
+		if(chunk.size != 0){
+			free(chunk.response);
+		}
     }
 
-    return chunk.response;
+    return 0;
 }
 
 
@@ -324,15 +328,13 @@ int main ()
 	char request[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
 							 "You are informing the captain that we have encountered a spaceship.  Ask the captain"
 							  "if they wish to prepare for battle or attempt to communicate.  Keep your response to"
-							   "a single paragraph of less then 200 characters.\", \"stream\": false}";
-	char *message_ptr = ollama_request(request);
+							   "a single paragraph of less then 200 characters.\", \"stream\": false}"; 
+	char response_buffer[1000];
 	char first_words[1000];
+	ollama_request(request, response_buffer);
+	if(response_buffer != NULL) get_msg_from_response(response_buffer, first_words, 1000);
 
-	if( message_ptr != NULL) {
-		get_msg_from_response(message_ptr, first_words, 1000);
-		free(message_ptr);
-	}
-
+	
 	
 
 
@@ -378,7 +380,9 @@ int main ()
     	guy.eye_in_width_off = 10 + rand()%20;
     	guy.iris_size_off = 5 + rand()%10;
    		guy.pupil_radius = 5 + rand()%10;
-
+		
+		ollama_request(request, response_buffer);
+		if(response_buffer != NULL) get_msg_from_response(response_buffer, first_words, 1000);
 
 			
 		}

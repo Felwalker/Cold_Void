@@ -21,7 +21,7 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include <cJSON.h>
 
 //declare game state data
-typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END} GameScreen;
+typedef enum {TITLE, BATTLE_START, BATTLE_HAPPENING, BATTLE_END, BATTLE_END_MESSAGE} GameScreen;
 
 const int screen_width = 1600;
 const int screen_height = 1280;
@@ -325,13 +325,25 @@ int main ()
 	int cursor_position = 0;
 
 	//make first ollama_request for text and store it
-	char request[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
+	char ship_encounter_message[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
 							 "You are informing the captain that we have encountered a spaceship.  Ask the captain"
 							  "if they wish to prepare for battle or attempt to communicate.  Keep your response to"
 							   "a single paragraph of less then 200 characters.\", \"stream\": false}"; 
+
+	char battle_end_message_ship_destroyed[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
+				"Your ship has just been in a battle with another spaceship"			 
+				"You are informing the captain that the spaceship has been destroyed."
+							  "You congradulate the captain for the victory.  Keep your response to"
+							   "a single paragraph of less then 200 characters.\", \"stream\": false}";
+
+	char battle_end_message_now_friends[] = "{\"model\": \"llama3\", \"prompt\": \"You are a character on a spaceship."
+				"Your ship had just made contact with another spaceship"			 
+				"You are informing the captain that they have successfully made friends with the spaceship"
+							  "You congradulate the captain for their successful use of diplomacy.  Keep your response to"
+							   "a single paragraph of less then 200 characters.\", \"stream\": false}";
 	char response_buffer[1000];
 	char first_words[1000];
-	ollama_request(request, response_buffer);
+	ollama_request(ship_encounter_message, response_buffer);
 	if(response_buffer != NULL) get_msg_from_response(response_buffer, first_words, 1000);
 
 	
@@ -381,7 +393,7 @@ int main ()
     	guy.iris_size_off = 5 + rand()%10;
    		guy.pupil_radius = 5 + rand()%10;
 		
-		ollama_request(request, response_buffer);
+		ollama_request(ship_encounter_message, response_buffer);
 		if(response_buffer != NULL) get_msg_from_response(response_buffer, first_words, 1000);
 
 			
@@ -471,20 +483,40 @@ int main ()
 					enemy_state = FRIENDLY;
 				}
 				if(enemy_state == FRIENDLY || enemy_state == DEAD){
-					current_screen = BATTLE_END;
+					current_screen = BATTLE_END_MESSAGE;
 				}
 				
 			} break;
-			case BATTLE_END:
+			case BATTLE_END_MESSAGE:
 			{
 			//	DrawText("BATTLE_END", 0, 0, 100, RED);
 				draw_head(guy);				
-				enemy_ship_SM();
+				
 				draw_cold_void_textbox();
-				DrawText("Well done!", text_start_x, text_start_y, textbox_text_size, WHITE);
+				
+				if(enemy_state == FRIENDLY){
+					enemy_ship_SM();
+					ollama_request(battle_end_message_now_friends, response_buffer);
+					
+					
+				}
+				else if(enemy_state == DEAD){
+					ollama_request(battle_end_message_ship_destroyed, response_buffer);
+				}
+				if(response_buffer != NULL) get_msg_from_response(response_buffer, first_words, 1000);
+				draw_text_wrapped(first_words);
+				current_screen = BATTLE_END;
+				
 
             
 			} break;
+			case BATTLE_END:
+			{
+				draw_head(guy);
+				enemy_ship_SM();
+				draw_cold_void_textbox();
+				draw_text_wrapped(first_words);
+			}break;
 			default: break;
 		}
 		
